@@ -3,9 +3,7 @@ package com.mybank.transferservice;
 import com.mybank.transferservice.dto.TransferRequest;
 import com.mybank.transferservice.dto.TransferResponse;
 import com.mybank.transferservice.model.Account;
-import com.mybank.transferservice.repository.AccountRepository;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -19,32 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class ApplicationE2ETest extends AbstractIntegrationTest {
 
-    private AccountRepository accountRepository;
-
-    @Override
-    protected void doBeforeEach(Jdbi jdbi) {
-
-    }
-
-    @Override
-    protected void doBeforeAll(Jdbi jdbi) {
-        accountRepository = jdbi.onDemand(AccountRepository.class);
-    }
-
     @Test
     public void shouldTransferMoneySuccessfully() {
 
         //given
-        Account account1 = Account.builder().id(UUID.randomUUID()).balance(100).build();
-        Account account2 = Account.builder().id(UUID.randomUUID()).balance(50).build();
+        Account fromAccount = createAccount(UUID.randomUUID(), 100);
+        Account toAccount = createAccount(UUID.randomUUID(), 50);
 
-        accountRepository.create(account1);
-        accountRepository.create(account2);
+        TransferRequest request = TransferRequest.builder().beneficiaryId(toAccount.getId()).amount(24.99).build();
 
-        TransferRequest request = TransferRequest.builder().beneficiaryId(account2.getId()).amount(24.99).build();
         //when
         Response response = newRequest()
-                .path(String.format("accounts/%s/transfers", account1.getId()))
+                .path(String.format("accounts/%s/transfers", fromAccount.getId()))
                 .request()
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON_TYPE));
@@ -53,10 +37,11 @@ public class ApplicationE2ETest extends AbstractIntegrationTest {
 
         //then
         assertEquals(200, response.getStatus());
-        assertEquals(accountRepository.findById(account1.getId()).get().getBalance(), 75.01);
-        assertEquals(accountRepository.findById(account2.getId()).get().getBalance(), 74.99);
 
-        verifyJournalEntry(transferResponse.getTransactionId(), account1.getId(), transferResponse.getCorrelationId(), -24.99);
-        verifyJournalEntry(transferResponse.getBeneficiaryTransactionId(), account2.getId(), transferResponse.getCorrelationId(), 24.99);
+        verifyAccountBalance(fromAccount.getId(), 75.01);
+        verifyAccountBalance(toAccount.getId(), 74.99);
+
+        verifyJournalEntry(transferResponse.getTransactionId(), fromAccount.getId(), transferResponse.getCorrelationId(), -24.99);
+        verifyJournalEntry(transferResponse.getBeneficiaryTransactionId(), toAccount.getId(), transferResponse.getCorrelationId(), 24.99);
     }
 }

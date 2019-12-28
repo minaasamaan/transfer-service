@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Value
 @Builder
-public class Account{
+public class Account {
     private UUID id;
     private double balance;
 }

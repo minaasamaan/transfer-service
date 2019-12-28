@@ -14,12 +14,7 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
     private AccountRepository testee;
 
     @Override
-    protected void doBeforeEach(Jdbi jdbi) {
-        //empty implementation
-    }
-
-    @Override
-    protected void doBeforeAll(Jdbi jdbi){
+    protected void doBeforeAll(Jdbi jdbi) {
         testee = jdbi.onDemand(AccountRepository.class);
     }
 
@@ -27,50 +22,41 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
     public void debitWorks() {
 
         //given
-        Account account1= Account.builder().id(UUID.randomUUID()).balance(100d).build();
-
-        testee.create(account1);
+        Account account = createAccount(UUID.randomUUID(), 100);
 
         //when
-        int rowsUpdated= testee.debit(account1.getId(), 24.99);
+        int rowsUpdated = testee.debit(account.getId(), 24.99);
 
         //then
         assertEquals(1, rowsUpdated);
-
-        assertEquals(testee.findById(account1.getId()).get().getBalance(),75.01);
+        verifyAccountBalance(account.getId(), 75.01);
     }
 
     @Test
     public void shouldNotDebit_ifNotEnoughBalance() {
 
         //given
-        Account account1= Account.builder().id(UUID.randomUUID()).balance(100d).build();
-
-        testee.create(account1);
+        Account account = createAccount(UUID.randomUUID(), 100);
 
         //when
-        int rowsUpdated= testee.debit(account1.getId(), 124.99);
+        int rowsUpdated = testee.debit(account.getId(), 124.99);
 
         //then
         assertEquals(0, rowsUpdated);
-
-        assertEquals(testee.findById(account1.getId()).get().getBalance(),100d);
+        verifyAccountBalance(account.getId(), 100);
     }
 
     @Test
     public void creditWorks() {
 
         //given
-        Account account1= Account.builder().id(UUID.randomUUID()).balance(100d).build();
-
-        testee.create(account1);
+        Account account = createAccount(UUID.randomUUID(), 100);
 
         //when
-        int rowsUpdated= testee.credit(account1.getId(), 24.99);
+        int rowsUpdated = testee.credit(account.getId(), 24.99);
 
         //then
         assertEquals(1, rowsUpdated);
-
-        assertEquals(testee.findById(account1.getId()).get().getBalance(),124.99);
+        verifyAccountBalance(account.getId(), 124.99);
     }
 }

@@ -24,8 +24,8 @@ public class TransferResource {
 
     @POST
     @Path("/transfers")
-    public TransferResponse transfer(@PathParam("accountId")UUID fromAccountId, TransferRequest transferRequest){
-        TransferVo transferVo= transferService.transfer(fromAccountId, transferRequest.getBeneficiaryId(), transferRequest.getAmount());
+    public TransferResponse transfer(@PathParam("accountId") UUID fromAccountId, TransferRequest transferRequest) {
+        TransferVo transferVo = transferService.transfer(fromAccountId, transferRequest.getBeneficiaryId(), transferRequest.getAmount());
         return TransferResponse.builder()
                 .transactionId(transferVo.getDebitTransactionId())
                 .beneficiaryTransactionId(transferVo.getCreditTransactionId())

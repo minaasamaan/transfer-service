@@ -1,10 +1,10 @@
 package com.mybank.transferservice.service;
 
+import com.mybank.transferservice.exception.AccountNotFoundException;
+import com.mybank.transferservice.exception.NotEnoughBalanceException;
 import com.mybank.transferservice.model.JournalEntry;
 import com.mybank.transferservice.repository.AccountRepository;
 import com.mybank.transferservice.repository.JournalEntryRepository;
-import com.mybank.transferservice.exception.AccountNotFoundException;
-import com.mybank.transferservice.exception.NotEnoughBalanceException;
 import com.mybank.transferservice.vo.TransferVo;
 import lombok.AllArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -16,12 +16,11 @@ import java.util.logging.Logger;
 @AllArgsConstructor
 public class TransferService {
 
-    private static final Logger logger= Logger.getLogger(TransferService.class.getName());
+    private static final Logger logger = Logger.getLogger(TransferService.class.getName());
 
     private Jdbi jdbi;
 
     /**
-     *
      * @param fromAccount
      * @param toAccount
      * @param amount
@@ -29,7 +28,7 @@ public class TransferService {
      * @throws AccountNotFoundException
      * @throws NotEnoughBalanceException
      */
-    public TransferVo transfer(UUID fromAccount, UUID toAccount, double amount) throws AccountNotFoundException, NotEnoughBalanceException{
+    public TransferVo transfer(UUID fromAccount, UUID toAccount, double amount) throws AccountNotFoundException, NotEnoughBalanceException {
 
         logger.log(Level.FINE, String.format("Starting transfer of amount %s from account: %s to account %s", amount, fromAccount, toAccount));
 
@@ -49,7 +48,7 @@ public class TransferService {
 
             assert (accountRepository.credit(toAccount, amount) == 1);
 
-            UUID correlationId= UUID.randomUUID();
+            UUID correlationId = UUID.randomUUID();
             String transferDescription = String.format("Transfer transaction of amount %s from account: %s to account %s", amount, fromAccount, toAccount);
 
             JournalEntry debitJournalEntry = JournalEntry.builder()

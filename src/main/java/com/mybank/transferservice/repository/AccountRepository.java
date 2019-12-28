@@ -3,8 +3,6 @@ package com.mybank.transferservice.repository;
 import com.mybank.transferservice.model.Account;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
-import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
-import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
 import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
@@ -31,13 +29,13 @@ public interface AccountRepository {
     @RegisterRowMapper(AccountMapper.class)
     Optional<Account> findById(@Bind("id") UUID id);
 
-     class AccountMapper implements RowMapper<Account> {
-         @Override
-         public Account map(ResultSet rs, StatementContext ctx) throws SQLException {
-             return Account.builder()
-                     .id(UUID.fromString(rs.getString("id")))
-                     .balance(rs.getDouble("balance"))
-                     .build();
-         }
-     }
+    class AccountMapper implements RowMapper<Account> {
+        @Override
+        public Account map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return Account.builder()
+                    .id(UUID.fromString(rs.getString("id")))
+                    .balance(rs.getDouble("balance"))
+                    .build();
+        }
+    }
 }
