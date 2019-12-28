@@ -2,16 +2,19 @@ package com.mybank.transferservice.service;
 
 import com.mybank.transferservice.AbstractIntegrationTest;
 import com.mybank.transferservice.model.Account;
+import com.mybank.transferservice.model.JournalEntry;
 import com.mybank.transferservice.repository.AccountRepository;
-import com.mybank.transferservice.service.exception.AccountNotFoundException;
-import com.mybank.transferservice.service.exception.NotEnoughBalanceException;
+import com.mybank.transferservice.repository.JournalEntryRepository;
+import com.mybank.transferservice.exception.AccountNotFoundException;
+import com.mybank.transferservice.exception.NotEnoughBalanceException;
+import com.mybank.transferservice.vo.TransferVo;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TransferServiceTest extends AbstractIntegrationTest {
 
@@ -39,11 +42,14 @@ public class TransferServiceTest extends AbstractIntegrationTest {
         accountRepository.create(account2);
 
         //when
-        UUID trxId= testee.transfer(account1.getId(), account2.getId(), 24.99);
+        TransferVo actual= testee.transfer(account1.getId(), account2.getId(), 24.99);
 
         //then
-        assertEquals(accountRepository.findBy(account1.getId()).get().getBalance(),75.01);
-        assertEquals(accountRepository.findBy(account2.getId()).get().getBalance(),74.99);
+        assertEquals(accountRepository.findById(account1.getId()).get().getBalance(),75.01);
+        assertEquals(accountRepository.findById(account2.getId()).get().getBalance(),74.99);
+
+        verifyJournalEntry(actual.getDebitTransactionId(), account1.getId(), actual.getCorrelationId(), -24.99);
+        verifyJournalEntry(actual.getCreditTransactionId(), account2.getId(), actual.getCorrelationId(), 24.99);
     }
 
     @Test
@@ -58,7 +64,7 @@ public class TransferServiceTest extends AbstractIntegrationTest {
         assertThrows(AccountNotFoundException.class, ()-> testee.transfer(UUID.randomUUID(), account1.getId(), 24.99));
 
         //then
-        assertEquals(accountRepository.findBy(account1.getId()).get().getBalance(),100);
+        assertEquals(accountRepository.findById(account1.getId()).get().getBalance(),100);
     }
 
     @Test
@@ -74,7 +80,7 @@ public class TransferServiceTest extends AbstractIntegrationTest {
         assertThrows(NotEnoughBalanceException.class, ()-> testee.transfer(account1.getId(), account2.getId(), 24.99));
 
         //then
-        assertEquals(accountRepository.findBy(account1.getId()).get().getBalance(),24.98);
-        assertEquals(accountRepository.findBy(account2.getId()).get().getBalance(),50);
+        assertEquals(accountRepository.findById(account1.getId()).get().getBalance(),24.98);
+        assertEquals(accountRepository.findById(account2.getId()).get().getBalance(),50);
     }
 }

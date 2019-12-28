@@ -4,12 +4,13 @@ create table accounts(
   primary key (id)
 );
 
-create table transactions(
+create table journal_entries(
   id UUID not null,
-  acount_id UUID not null,
+  account_id UUID not null,
+  correlation_id UUID not null,
   amount float not null,
-  type varchar not null,
+  description varchar,
   primary key (id),
-  foreign key (acount_id) references accounts(id)
+  foreign key (account_id) references accounts(id)
 );
 

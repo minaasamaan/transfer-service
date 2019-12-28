@@ -53,7 +53,10 @@ public class ApplicationE2ETest extends AbstractIntegrationTest {
 
         //then
         assertEquals(200, response.getStatus());
-        assertEquals(accountRepository.findBy(account1.getId()).get().getBalance(), 75.01);
-        assertEquals(accountRepository.findBy(account2.getId()).get().getBalance(), 74.99);
+        assertEquals(accountRepository.findById(account1.getId()).get().getBalance(), 75.01);
+        assertEquals(accountRepository.findById(account2.getId()).get().getBalance(), 74.99);
+
+        verifyJournalEntry(transferResponse.getTransactionId(), account1.getId(), transferResponse.getCorrelationId(), -24.99);
+        verifyJournalEntry(transferResponse.getBeneficiaryTransactionId(), account2.getId(), transferResponse.getCorrelationId(), 24.99);
     }
 }

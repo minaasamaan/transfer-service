@@ -1,4 +1,4 @@
-package com.mybank.transferservice.service.exception;
+package com.mybank.transferservice.exception;
 
 import javax.ws.rs.NotFoundException;
 import java.util.UUID;

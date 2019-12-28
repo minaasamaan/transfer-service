@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public interface AccountRepository {
 
-    @SqlUpdate("insert into accounts(id, balance) values (:id, :balance)")
+    @SqlUpdate("insert into accounts values (:id, :balance)")
     void create(@BindBean Account account);
 
     @SqlUpdate("update accounts set balance=balance -:amount where id=:id and balance >= :amount")
@@ -29,7 +29,7 @@ public interface AccountRepository {
 
     @SqlQuery("select * from accounts where id=:id")
     @RegisterRowMapper(AccountMapper.class)
-    Optional<Account> findBy(@Bind("id") UUID id);
+    Optional<Account> findById(@Bind("id") UUID id);
 
      class AccountMapper implements RowMapper<Account> {
          @Override

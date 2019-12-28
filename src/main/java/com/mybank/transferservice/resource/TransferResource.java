@@ -3,6 +3,7 @@ package com.mybank.transferservice.resource;
 import com.mybank.transferservice.dto.TransferRequest;
 import com.mybank.transferservice.dto.TransferResponse;
 import com.mybank.transferservice.service.TransferService;
+import com.mybank.transferservice.vo.TransferVo;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -24,7 +25,11 @@ public class TransferResource {
     @POST
     @Path("/transfers")
     public TransferResponse transfer(@PathParam("accountId")UUID fromAccountId, TransferRequest transferRequest){
-        UUID transactionId= transferService.transfer(fromAccountId, transferRequest.getBeneficiaryId(), transferRequest.getAmount());
-        return TransferResponse.builder().transactionId(transactionId).build();
+        TransferVo transferVo= transferService.transfer(fromAccountId, transferRequest.getBeneficiaryId(), transferRequest.getAmount());
+        return TransferResponse.builder()
+                .transactionId(transferVo.getDebitTransactionId())
+                .beneficiaryTransactionId(transferVo.getCreditTransactionId())
+                .correlationId(transferVo.getCorrelationId())
+                .build();
     }
 }

@@ -10,4 +10,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TransferResponse {
     private UUID transactionId;
+    private UUID beneficiaryTransactionId;
+    private UUID correlationId;
 }

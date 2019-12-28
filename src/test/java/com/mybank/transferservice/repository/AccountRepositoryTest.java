@@ -37,7 +37,7 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
         //then
         assertEquals(1, rowsUpdated);
 
-        assertEquals(testee.findBy(account1.getId()).get().getBalance(),75.01);
+        assertEquals(testee.findById(account1.getId()).get().getBalance(),75.01);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
         //then
         assertEquals(0, rowsUpdated);
 
-        assertEquals(testee.findBy(account1.getId()).get().getBalance(),100d);
+        assertEquals(testee.findById(account1.getId()).get().getBalance(),100d);
     }
 
     @Test
@@ -71,6 +71,6 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
         //then
         assertEquals(1, rowsUpdated);
 
-        assertEquals(testee.findBy(account1.getId()).get().getBalance(),124.99);
+        assertEquals(testee.findById(account1.getId()).get().getBalance(),124.99);
     }
 }
