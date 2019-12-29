@@ -11,36 +11,26 @@ database:
   password: sa
 
   # the JDBC URL
-  url: jdbc:h2:mem:test
-
-server:
-  type: simple
-  connector:
-    type: http
-    port: 80
+  url: jdbc:h2:./target/example
 
 #server:
-##  softNofileLimit: 1000
-##  hardNofileLimit: 1000
-#  applicationConnectors:
-#    - type: http
-#      port: 8080
-#    - type: https
-#      port: 8443
-#      keyStorePath: example.keystore
-#      keyStorePassword: example
-#    #this requires the alpn-boot library on the JVM's boot classpath
-#    #- type: h2
-#    #  port: 8445
-#    #  keyStorePath: example.keystore
-#    #  keyStorePassword: example
-#  adminConnectors:
-#    - type: http
-#      port: 8081
-#    - type: https
-#      port: 8444
-#      keyStorePath: example.keystore
-#      keyStorePassword: example
+#  type: simple
+#  connector:
+#    type: http
+#    port: 80
+
+server:
+#  softNofileLimit: 1000
+#  hardNofileLimit: 1000
+  applicationConnectors:
+    - type: http
+      port: 80
+  adminConnectors:
+    - type: http
+      port: 8081
+
+swagger:
+  resourcePackage: com.mybank.transferservice.resource
 
 # Logging settings.
 logging:
@@ -71,10 +61,10 @@ logging:
       timeZone: UTC
       maxFileSize: 10MiB
 
-metrics:
-  reporters:
-    - type: graphite
-      host: localhost
-      port: 2003
-      prefix: example
-      frequency: 1m
+#metrics:
+#  reporters:
+#    - type: graphite
+#      host: localhost
+#      port: 2003
+#      prefix: example
+#      frequency: 1m

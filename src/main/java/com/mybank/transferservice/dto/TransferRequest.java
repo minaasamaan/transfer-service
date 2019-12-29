@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Builder
@@ -12,6 +14,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransferRequest {
+    @NotNull
     private UUID beneficiaryId;
-    private double amount;
+    @NotNull
+    @Min(1)
+    private Double amount;
 }

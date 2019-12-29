@@ -8,32 +8,48 @@ import io.dropwizard.jdbi3.JdbiFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.jdbi.v3.core.Jdbi;
 
 public class TransferApplication extends Application<TransferAppConfiguration> {
+
+    private static final String[] db_migration_arguments= new String[]{"db", "migrate","src/main/resources/application.yml"};
+    private static final String app_name= "transfer-service";
+
     public static void main(String[] args) throws Exception {
         new TransferApplication().run(args);
     }
 
     @Override
     public String getName() {
-        return "transfer-service";
+        return app_name;
     }
 
     @Override
     public void initialize(Bootstrap<TransferAppConfiguration> bootstrap) {
-        bootstrap.addBundle(new MigrationsBundle<TransferAppConfiguration>() {
+        bootstrap.addBundle(new MigrationsBundle<>() {
             @Override
             public DataSourceFactory getDataSourceFactory(TransferAppConfiguration configuration) {
                 return configuration.getDataSourceFactory();
             }
         });
+
+        bootstrap.addBundle(new SwaggerBundle<>() {
+            @Override
+            protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TransferAppConfiguration configuration) {
+                return configuration.swaggerBundleConfiguration;
+            }
+        });
     }
 
     @Override
-    public void run(TransferAppConfiguration configuration, Environment environment) {
+    public void run(TransferAppConfiguration configuration, Environment environment) throws Exception {
+
+        run(db_migration_arguments);
+
         final JdbiFactory factory = new JdbiFactory();
-        final Jdbi jdbi = factory.build(environment, configuration.getDataSourceFactory(), "transfer-service");
+        final Jdbi jdbi = factory.build(environment, configuration.getDataSourceFactory(), app_name);
         environment.jersey().register(new TransferResource(new TransferService(jdbi)));
     }
 }

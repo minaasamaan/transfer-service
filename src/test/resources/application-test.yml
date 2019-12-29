@@ -49,6 +49,9 @@ server:
 #      keyStorePath: example.keystore
 #      keyStorePassword: example
 
+swagger:
+  resourcePackage: com.mybank.transferservice.resource
+
 # Logging settings.
 logging:
   level: INFO
