@@ -38,10 +38,14 @@ public abstract class AbstractIntegrationTest {
         return application.client().target("http://localhost:" + application.getLocalPort());
     }
 
-    protected static Account createAccount(UUID id, double initialBalance) {
+    protected static Account createAccount(double initialBalance) {
         Account account = Account.builder().id(UUID.randomUUID()).balance(initialBalance).build();
         accountRepository.create(account);
         return account;
+    }
+
+    protected static Optional<Account> getAccount(UUID id) {
+        return accountRepository.findById(id);
     }
 
     protected static void verifyAccountBalance(UUID id, double expectedBalance) {

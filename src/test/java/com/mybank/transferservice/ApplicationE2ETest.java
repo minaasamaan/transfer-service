@@ -21,8 +21,8 @@ public class ApplicationE2ETest extends AbstractIntegrationTest {
     public void shouldTransferMoneySuccessfully() {
 
         //given
-        Account fromAccount = createAccount(UUID.randomUUID(), 100);
-        Account toAccount = createAccount(UUID.randomUUID(), 50);
+        Account fromAccount = createAccount(100);
+        Account toAccount = createAccount(50);
 
         TransferRequest request = TransferRequest.builder().beneficiaryId(toAccount.getId()).amount(24.99).build();
 

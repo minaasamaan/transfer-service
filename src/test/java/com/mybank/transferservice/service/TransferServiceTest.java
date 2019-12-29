@@ -9,7 +9,13 @@ import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TransferServiceTest extends AbstractIntegrationTest {
@@ -25,8 +31,8 @@ public class TransferServiceTest extends AbstractIntegrationTest {
     public void transferWorks() {
 
         //given
-        Account fromAccount = createAccount(UUID.randomUUID(), 100);
-        Account toAccount = createAccount(UUID.randomUUID(), 50);
+        Account fromAccount = createAccount(100);
+        Account toAccount = createAccount(50);
 
         //when
         TransferVo actual = testee.transfer(fromAccount.getId(), toAccount.getId(), 24.99);
@@ -43,7 +49,7 @@ public class TransferServiceTest extends AbstractIntegrationTest {
     public void shouldHandleAccountNotFound() {
 
         //given
-        Account fromAccount = createAccount(UUID.randomUUID(), 100);
+        Account fromAccount = createAccount(100);
 
         //when
         assertThrows(AccountNotFoundException.class, () -> testee.transfer(fromAccount.getId(), UUID.randomUUID(), 24.99));
@@ -57,8 +63,8 @@ public class TransferServiceTest extends AbstractIntegrationTest {
     public void shouldHandleInsufficientBalance() {
 
         //given
-        Account fromAccount = createAccount(UUID.randomUUID(), 24.98);
-        Account toAccount = createAccount(UUID.randomUUID(), 50);
+        Account fromAccount = createAccount(24.98);
+        Account toAccount = createAccount(50);
 
         //when
         assertThrows(NotEnoughBalanceException.class, () -> testee.transfer(fromAccount.getId(), toAccount.getId(), 24.99));
@@ -66,5 +72,31 @@ public class TransferServiceTest extends AbstractIntegrationTest {
         //then
         verifyAccountBalance(fromAccount.getId(), 24.98);
         verifyAccountBalance(toAccount.getId(), 50);
+    }
+
+    @Test
+    public void shouldStayConsistentWhileExecutingConcurrentCalls(){
+
+        //given
+        final Account fromAccount = createAccount(1275);
+        final Account toAccount = createAccount(1275);
+
+        double expectedBalance = fromAccount.getBalance() + toAccount.getBalance();
+
+        IntStream.rangeClosed(1, 50).parallel().forEach(number -> {
+
+            if(number%2==0){
+                testee.transfer(fromAccount.getId(), toAccount.getId(), number);
+            }else{
+                testee.transfer(toAccount.getId(), fromAccount.getId(), number);
+            }
+        });
+
+        Account refreshedFromAccount = getAccount(fromAccount.getId()).get();
+        Account refreshedToAccount = getAccount(toAccount.getId()).get();
+
+        double actualBalance = refreshedFromAccount.getBalance() + refreshedToAccount.getBalance();
+
+        assertEquals(expectedBalance, actualBalance);
     }
 }

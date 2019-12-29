@@ -9,6 +9,7 @@ import com.mybank.transferservice.vo.TransferVo;
 import lombok.AllArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,17 +31,15 @@ public class TransferService {
      */
     public TransferVo transfer(UUID fromAccount, UUID toAccount, double amount) throws AccountNotFoundException, NotEnoughBalanceException {
 
-        logger.log(Level.FINE, String.format("Starting transfer of amount %s from account: %s to account %s", amount, fromAccount, toAccount));
+        logger.log(Level.INFO, String.format("Starting transfer of amount %s from account: %s to account %s", amount, fromAccount, toAccount));
 
         return jdbi.inTransaction(handle -> {
             AccountRepository accountRepository = handle.attach(AccountRepository.class);
             JournalEntryRepository journalRepository = handle.attach(JournalEntryRepository.class);
-            //Assumptions:
-            //1- There's no hard deletion for accounts
-            //2- Account status (i.e. inactive accounts) is out-of-scope here!
-            //Note: selects are inside the trx to reuse the opened connection..
-            accountRepository.findById(fromAccount).orElseThrow(() -> new AccountNotFoundException(fromAccount));
-            accountRepository.findById(toAccount).orElseThrow(() -> new AccountNotFoundException(toAccount));
+
+            List<UUID> ids= accountRepository.lockAndGet(fromAccount, toAccount);
+
+            validateOrThrowException(ids, fromAccount, toAccount);
 
             if (accountRepository.debit(fromAccount, amount) < 1) {
                 throw new NotEnoughBalanceException(fromAccount);
@@ -49,7 +48,9 @@ public class TransferService {
             assert (accountRepository.credit(toAccount, amount) == 1);
 
             UUID correlationId = UUID.randomUUID();
-            String transferDescription = String.format("Transfer transaction of amount %s from account: %s to account %s", amount, fromAccount, toAccount);
+
+            String transferDescription = String.format("Transfer transaction with correlationId: %s of amount: %s from account: %s to account: %s"
+                    ,correlationId, amount, fromAccount, toAccount);
 
             JournalEntry debitJournalEntry = JournalEntry.builder()
                     .id(UUID.randomUUID())
@@ -76,5 +77,15 @@ public class TransferService {
                     .correlationId(correlationId)
                     .build();
         });
+    }
+
+    private void validateOrThrowException(List<UUID> ids, UUID fromAccount, UUID toAccount) {
+        if(ids.size()<2){
+            if(!ids.contains(fromAccount)){
+                throw new AccountNotFoundException(fromAccount);
+            }else{
+                throw new AccountNotFoundException(toAccount);
+            }
+        }
     }
 }

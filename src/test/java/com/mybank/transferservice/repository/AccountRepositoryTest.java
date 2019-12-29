@@ -22,7 +22,7 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
     public void debitWorks() {
 
         //given
-        Account account = createAccount(UUID.randomUUID(), 100);
+        Account account = createAccount(100);
 
         //when
         int rowsUpdated = testee.debit(account.getId(), 24.99);
@@ -36,7 +36,7 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
     public void shouldNotDebit_ifNotEnoughBalance() {
 
         //given
-        Account account = createAccount(UUID.randomUUID(), 100);
+        Account account = createAccount(100);
 
         //when
         int rowsUpdated = testee.debit(account.getId(), 124.99);
@@ -50,7 +50,7 @@ public class AccountRepositoryTest extends AbstractIntegrationTest {
     public void creditWorks() {
 
         //given
-        Account account = createAccount(UUID.randomUUID(), 100);
+        Account account = createAccount(100);
 
         //when
         int rowsUpdated = testee.credit(account.getId(), 24.99);
