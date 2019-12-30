@@ -39,7 +39,7 @@ public class TransferApplication extends Application<TransferAppConfiguration> {
         bootstrap.addBundle(new SwaggerBundle<>() {
             @Override
             protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TransferAppConfiguration configuration) {
-                return configuration.swaggerBundleConfiguration;
+                return configuration.getSwaggerBundleConfiguration();
             }
         });
     }

@@ -81,6 +81,7 @@ public class TransferServiceTest extends AbstractIntegrationTest {
 
         IntStream.rangeClosed(1, 50).parallel().forEach(number -> {
 
+            //To assure deadlock-free execution, etc...
             if (number % 2 == 0) {
                 testee.transfer(fromAccount.getId(), toAccount.getId(), number);
             } else {

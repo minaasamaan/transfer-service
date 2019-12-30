@@ -12,6 +12,9 @@
         <dropwizard.version>2.0.0</dropwizard.version>
         <junit5.version>5.5.2</junit5.version>
         <maven.compiler.release>12</maven.compiler.release>
+        <swagger.version>2.0.0-1</swagger.version>
+        <lombok.version>1.18.10</lombok.version>
+        <h2.version>1.4.200</h2.version>
     </properties>
     <dependencies>
         <dependency>
@@ -32,18 +35,18 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.10</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.200</version>
+            <version>${h2.version}</version>
         </dependency>
         <dependency>
             <groupId>com.smoketurner</groupId>
             <artifactId>dropwizard-swagger</artifactId>
-            <version>2.0.0-1</version>
+            <version>${swagger.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.glassfish.jersey.containers</groupId>
@@ -94,9 +97,6 @@
                 <configuration>
                     <mainClass>com.mybank.transferservice.TransferApplication</mainClass>
                     <arguments>
-                        <!--                        <argument>db</argument>-->
-                        <!--                        <argument>migrate</argument>-->
-                        <!--                        <argument>src/main/resources/application.yml</argument>-->
                         <argument>server</argument>
                         <argument>src/main/resources/application.yml</argument>
                     </arguments>
