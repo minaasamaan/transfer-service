@@ -24,6 +24,7 @@ server:
 
 swagger:
   resourcePackage: com.mybank.transferservice.resource
+  title: Transfers Service
 
 # Logging settings.
 logging:

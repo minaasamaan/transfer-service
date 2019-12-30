@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import static com.mybank.transferservice.util.Validators.validateOrThrow;
 
-@Api
+@Api("Transfers Operations")
 @Path("/accounts/{accountId}")
 @Produces(MediaType.APPLICATION_JSON)
 @AllArgsConstructor
