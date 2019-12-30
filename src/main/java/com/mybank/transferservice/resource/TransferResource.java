@@ -6,6 +6,8 @@ import com.mybank.transferservice.exception.InvalidTransferToSelfException;
 import com.mybank.transferservice.service.TransferService;
 import com.mybank.transferservice.vo.TransferVo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -31,6 +33,12 @@ public class TransferResource {
 
     @POST
     @Path("/transfers")
+    @ApiResponses({
+            @ApiResponse(code= 404, message="If the accounts issuing the transfer or benefiting from transfer does not exist"),
+            @ApiResponse(code= 409, message="If the account issuing the transfer trying a transfer-to-self"),
+            @ApiResponse(code= 412, message="If the account issuing the transfer does not have enough balance"),
+            @ApiResponse(code= 422, message="If the amount to be transferred is less than 1 (currency assumed to be not important)"),
+    })
     public TransferResponse transfer(@PathParam("accountId") UUID fromAccountId, @NotNull @Valid TransferRequest transferRequest) {
 
         validateOrThrow(() -> !fromAccountId.equals(transferRequest.getBeneficiaryId()), new InvalidTransferToSelfException(fromAccountId));

@@ -18,6 +18,9 @@ import java.util.logging.Logger;
 
 import static com.mybank.transferservice.util.Validators.validateOrThrow;
 
+/**
+ * Service responsible for transfer money business logic
+ */
 @AllArgsConstructor
 public class TransferService {
 
@@ -26,15 +29,14 @@ public class TransferService {
     private Jdbi jdbi;
 
     /**
-     * Executes money transfer in an atomic transaction,
-     *
-     * @param fromAccount
-     * @param toAccount
-     * @param amount
-     * @return
-     * @throws AccountNotFoundException
-     * @throws NotEnoughBalanceException
-     * @throws IllegalArgumentException
+     * Executes money transfer in an atomic transaction, which means debit & credit operations are guaranteed to either execute together or nothing will be committed.
+     * @param fromAccount account id to transfer money from
+     * @param toAccount beneficiary account id who will receive the money
+     * @param amount amount to be transferred
+     * @return {@link TransferVo} which encapsulates transaction related data
+     * @throws AccountNotFoundException if either accounts doesn't exist
+     * @throws NotEnoughBalanceException if account to transfer money from has balance less than the transfer amount
+     * @throws IllegalArgumentException if amount<1 or fromAccount & toAccount are the same.
      */
     public TransferVo transfer(UUID fromAccount, UUID toAccount, double amount) {
 
