@@ -5,8 +5,6 @@ import com.mybank.transferservice.model.Account;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccountRepositoryTest extends AbstractIntegrationTest {

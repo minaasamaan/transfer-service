@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public interface JournalEntryRepository {
 
-    @SqlUpdate("insert into journal_entries values (:id, :accountId, :correlationId, :amount, :description)")
+    @SqlUpdate("insert into journal_entries (id, account_id, correlation_id, amount, description) values (:id, :accountId, :correlationId, :amount, :description)")
     void create(@BindBean JournalEntry journalEntry);
 
     @SqlQuery("select * from journal_entries where id=:id")
@@ -32,6 +32,7 @@ public interface JournalEntryRepository {
                     .correlationId(UUID.fromString(rs.getString("correlation_id")))
                     .amount(rs.getDouble("amount"))
                     .description(rs.getString("description"))
+                    .createdAt(rs.getTimestamp("created_at").toInstant())
                     .build();
         }
     }

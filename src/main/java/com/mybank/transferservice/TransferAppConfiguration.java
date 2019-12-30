@@ -12,12 +12,11 @@ import javax.validation.constraints.NotNull;
 
 public class TransferAppConfiguration extends Configuration implements DatabaseConfiguration<TransferAppConfiguration> {
 
+    @JsonProperty("swagger")
+    public SwaggerBundleConfiguration swaggerBundleConfiguration;
     @Valid
     @NotNull
     private DataSourceFactory database = new DataSourceFactory();
-
-    @JsonProperty("swagger")
-    public SwaggerBundleConfiguration swaggerBundleConfiguration;
 
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {

@@ -3,6 +3,7 @@ package com.mybank.transferservice.model;
 import lombok.Builder;
 import lombok.Value;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Value
@@ -13,4 +14,5 @@ public class JournalEntry {
     private UUID correlationId;
     private double amount;
     private String description;
+    private Instant createdAt;
 }

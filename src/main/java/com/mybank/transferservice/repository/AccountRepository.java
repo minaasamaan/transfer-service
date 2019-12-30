@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public interface AccountRepository {
 
-    @SqlUpdate("insert into accounts values (:id, :balance)")
+    @SqlUpdate("insert into accounts (id, balance) values (:id, :balance)")
     void create(@BindBean Account account);
 
     @SqlQuery("select id from accounts where id in (<accountList>) for update")

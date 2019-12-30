@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Builder
@@ -15,4 +16,5 @@ public class TransferResponse {
     private UUID transactionId;
     private UUID beneficiaryTransactionId;
     private UUID correlationId;
+    private Instant createdAt;
 }

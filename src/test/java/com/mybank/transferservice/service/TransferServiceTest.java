@@ -9,10 +9,6 @@ import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,7 +71,7 @@ public class TransferServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldStayConsistentWhileExecutingConcurrentCalls(){
+    public void shouldStayConsistentWhileExecutingConcurrentCalls() {
 
         //given
         final Account fromAccount = createAccount(1275);
@@ -85,9 +81,9 @@ public class TransferServiceTest extends AbstractIntegrationTest {
 
         IntStream.rangeClosed(1, 50).parallel().forEach(number -> {
 
-            if(number%2==0){
+            if (number % 2 == 0) {
                 testee.transfer(fromAccount.getId(), toAccount.getId(), number);
-            }else{
+            } else {
                 testee.transfer(toAccount.getId(), fromAccount.getId(), number);
             }
         });

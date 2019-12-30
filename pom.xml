@@ -94,9 +94,9 @@
                 <configuration>
                     <mainClass>com.mybank.transferservice.TransferApplication</mainClass>
                     <arguments>
-<!--                        <argument>db</argument>-->
-<!--                        <argument>migrate</argument>-->
-<!--                        <argument>src/main/resources/application.yml</argument>-->
+                        <!--                        <argument>db</argument>-->
+                        <!--                        <argument>migrate</argument>-->
+                        <!--                        <argument>src/main/resources/application.yml</argument>-->
                         <argument>server</argument>
                         <argument>src/main/resources/application.yml</argument>
                     </arguments>

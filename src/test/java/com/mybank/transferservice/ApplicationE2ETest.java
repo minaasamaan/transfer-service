@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
